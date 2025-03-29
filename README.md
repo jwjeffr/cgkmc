@@ -1,6 +1,22 @@
-# 💎 cgkmc
+# cgkmc
 
 [![Custom shields.io](https://img.shields.io/badge/docs-brightgreen?logo=github&logoColor=green&label=gh-pages)](https://jwjeffr.github.io/cgkmc/)
 
-`cgkmc` (short for `crystal-growth-kinetic-monte-carlo`) is a package for performing crystal growth simulations using
-the [Kinetic Monte Carlo](https://en.wikipedia.org/wiki/Kinetic_Monte_Carlo) method.
+[![PyPI version shields.io](https://img.shields.io/pypi/v/cgkmc.svg)](https://pypi.python.org/pypi/cgkmc/)
+[![PyPI pyversions shields.io](https://img.shields.io/pypi/pyversions/cgkmc.svg)](https://pypi.python.org/pypi/cgkmc/)
+
+## 💎 What is cgkmc?
+
+`cgkmc` is a package for performing crystal growth simulations using the 
+[Kinetic Monte Carlo](https://en.wikipedia.org/wiki/Kinetic_Monte_Carlo) method. `cgkmc`'s namesake is shorthand for
+Crystal Growth Kinetic Monte Carlo.
+
+## 📥 Installation
+
+```bash
+pip install cgkmc
+```
+
+📃 License
+
+`cgkmc` is released under the MIT License.

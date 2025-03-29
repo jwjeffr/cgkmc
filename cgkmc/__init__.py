@@ -5,13 +5,15 @@
 
 ## 📦 Simple cubic growth
 
+Below is an example of the growth of a small simple cubic lattice, printing a LAMMPS-style dump string
+
 ```py
 .. include:: ../examples/simple_cubic.py
 ```
 
 """
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __authors__ = ["Jacob Jeffries"]
 __author_emails__ = ["jwjeffr@clemson.edu"]
 __url__ = "https://github.com/jwjeffr/cgkmc"
