@@ -62,28 +62,28 @@ jobs:
           name: github-pages
           path: _build/
 
-    deploy-docs:
-      needs:
-        - create-docs
-      runs-on: ubuntu-latest
-      permissions:
-        pages: write
-        id-token: write
+  deploy-docs:
+    needs:
+      - create-docs
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
 
-      environment:
-        name: github-pages
-        url: ${{ steps.deployment.outputs.page_url }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-        - name: Download docs artifact
-          uses: actions/download-artifact@v4
-          with:
-            name: github-pages
-            path: _build/
+      - name: Download docs artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: _build/
 
-        - name: Deploy to GitHub Pages
-          id: deployment
-          uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
