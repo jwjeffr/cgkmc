@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cgkmc"
+dynamic = ["version"]
+description = "Crystal Growth Kinetic Monte Carlo"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+author = { name = "Jacob Jeffries", email = "jwjeffr@clemson.edu" }
+keywords = [
+    "kmc",
+    "crystal",
+    "nanocrystal",
+    "morphology",
+    "graph",
+    "surface",
+    "growth"
+]
+classifiers = [
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "numpy ~= 2.2.1",
+    "scipy ~= 1.13.1"
+]
+
+[project.urls]
+Homepage = "https://github.com/jwjeffr/cgkmc"
+
+[project.optional-dependencies]
+dev = [
+    "hatchling~=1.27.0",
+    "pytest~=8.0.2",
+    "ruff~=0.9.4",
+    "mypy~=1.13.0",
+    "pdoc~=15.0.1"
+]
+
+[tool.hatch.version]
+path = "cgkmc/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/cgkmc",
+]
