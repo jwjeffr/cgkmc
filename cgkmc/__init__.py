@@ -96,13 +96,13 @@ Replace placeholder video
 
 <p align="center">
     <video width="500px" height="400px" controls>
-        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+        <source src="https://raw.githubusercontent.com/jwjeffr/cgkmc/refs/heads/main/examples/petn.mp4" type="video/mp4">
     </video>
 </p>
 
 """
 
-__version__ = "0.0.5"
+__version__ = "0.0.6"
 __authors__ = ["Jacob Jeffries"]
 __author_emails__ = ["jwjeffr@clemson.edu"]
 __url__ = "https://github.com/jwjeffr/cgkmc"
