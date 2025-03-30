@@ -102,7 +102,7 @@ Replace placeholder video
 
 """
 
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 __authors__ = ["Jacob Jeffries"]
 __author_emails__ = ["jwjeffr@clemson.edu"]
 __url__ = "https://github.com/jwjeffr/cgkmc"
