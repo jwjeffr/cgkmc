@@ -90,19 +90,79 @@ mCoding has a very great YouTube video on this, which is [here](https://www.yout
 
 ## 🧪 Case study: PETN
 
-WIP: Describe PETN, include PETN code, and visualizations (surface energy figure, final morphology, etc)
+### What is PETN?
 
-Replace placeholder video
+[Pentaerythritol tetranitrate](https://en.wikipedia.org/wiki/Pentaerythritol_tetranitrate) (PETN) is a very well-studied
+organic crystalline system. Here, we will run `cgkmc` on a PETN system to predict the morphology of a PETN nanocrystal.
 
-<p align="center">
-    <video width="500px" height="400px" controls>
-        <source src="https://raw.githubusercontent.com/jwjeffr/cgkmc/refs/heads/main/examples/petn.mp4" type="video/mp4">
-    </video>
-</p>
+### PETN Parameters
 
+WIP
+
+### Script
+
+```py
+from io import StringIO
+from logging.config import dictConfig
+from pathlib import Path
+
+from cgkmc import simulations, containers, utils
+
+
+def main():
+
+    simulation = simulations.Simulation(
+        lattice=containers.CubicLattice(
+            dimensions=(62, 62, 140),
+            lattice_parameters=(9.088, 9.088, 6.737),
+            atomic_basis=[
+                [0.0, 0.0, 0.0],
+                [0.5, 0.5, 0.5]
+            ]
+        ),
+        interactions=simulations.KthNearest(
+            cutoffs=(7.0, 7.5),
+            interaction_energies=(-0.294, -0.184),
+            use_cache=True
+        ),
+        solvent=containers.Solvent(
+            beta=utils.temp_to_beta(temperature=300, units=utils.Units.metal),
+            diffusivity=1.0e+11,
+            solubility_limit=1.0e-4
+        ),
+        growth=containers.Growth(
+            initial_radius=75.0,
+            num_steps=2_000_000,
+            desired_size=40_000
+        )
+    )
+
+    with Path("petn.dump").open("w") as file:
+        simulation.perform(file, dump_every=1_000)
+
+
+if __name__ == "__main__":
+
+    main()
+```
+
+This generates a dump file that we can analyze in OVITO! The animation is below:
+
+<div style="padding:75% 0 0 0;position:relative;">
+<iframe
+    src="https://player.vimeo.com/video/1070858335?h=abecf46fa5&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" style="position:absolute;top:0;left:0;width:100%;height:100%;"
+    title="petn"
+>
+</iframe>
+</div>
+<script src="https://player.vimeo.com/api/player.js">
+</script>
+
+Some clear crystal morphology jumps out, namely $\\{110\\}$ surfaces. See a more full study
+[here](https://www.youtube.com/watch?v=dQw4w9WgXcQ)!
 """
 
-__version__ = "0.0.6"
+__version__ = "0.0.7"
 __authors__ = ["Jacob Jeffries"]
 __author_emails__ = ["jwjeffr@clemson.edu"]
 __url__ = "https://github.com/jwjeffr/cgkmc"
