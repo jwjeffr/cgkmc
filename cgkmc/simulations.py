@@ -1,3 +1,8 @@
+"""
+This module provides the main `Simulation` class to perform the growth KMC.
+"""
+
+
 from dataclasses import dataclass, field
 from typing import Optional, Tuple, IO
 from functools import cached_property
@@ -17,21 +22,58 @@ class Simulation:
     """
     Simulation class.
     Main method is `Simulation.perform`, which performs a crystal growth simulation using Kinetic Monte Carlo
+
+    Attributes:
+        lattice (CubicLattice):
+            The lattice on which to perform KMC
+        interactions (KthNearest):
+            The interactions between lattice sites
+        solvent (Solvent):
+            The solvent surrounding the initial spherical crystal
+        growth (Growth):
+            Growth parameters for the simulation
+        seed (int):
+            Optional seed to provide to the simulation for random number generation. Defaults to 0
+        generator (np.random.Generator):
+            Generator for the simulation. This attribute is set after initialization
+        lattice_points (np.ndarray):
+            Lattice points in the supercell. This attribute is set after initialization
+        bounds (np.ndarray):
+            Supercell bounds. This attribute is set after initialization
+        surface_density (float):
+            Surface density of the initial spherical seed in units of molecules per area. This attribute is set after
+            initialization
     """
 
     lattice: CubicLattice
+    """lattice inside supercell"""
+
     interactions: KthNearest
+    """interactions between lattice sites"""
+
     solvent: Solvent
+    """solvent surrounding initial seed"""
+
     growth: Growth
-    seed: Optional[int] = None
+    """Growth parameters"""
+
+    seed: Optional[int] = 0
+    """Optional seed for RNG"""
+
     generator: np.random.Generator = field(init=False)
+    """Random number generator"""
+
     lattice_points: np.typing.NDArray[np.floating] = field(init=False)
+    """Lattice points inside supercell"""
+
     bounds: np.typing.NDArray[np.floating] = field(init=False)
+    """Super cell bounds"""
+
     surface_density: float = field(init=False)
+    """Initial spherical surface density"""
 
     def __post_init__(self):
 
-        self.seed = self.seed or 0
         self.generator = np.random.default_rng(seed=self.seed)
         self.lattice_points, self.bounds = self.lattice.initialize_simulation()
 
@@ -41,6 +83,9 @@ class Simulation:
         r"""
         Defines the Hamiltonian matrix $\mathbf{Q}$, which defines the energy function:
         $$E(x) = \frac{1}{2}\mathbf{x}^\intercal\mathbf{Q}\mathbf{x}$$
+
+        Returns:
+            scipy.sparse.csr_matrix: Interaction matrix $\mathbf{Q}$
         """
 
         return self.interactions.get_hamiltonian(self.lattice_points, self.bounds)
@@ -50,6 +95,9 @@ class Simulation:
 
         r"""
         Defines the adjacency matrix $\mathbf{A}$, where $A_{ij} = 1$ if sites $i$ and $j$ have an interaction.
+
+        Returns:
+            scipy.sparse.csr_matrix: Adjacency matrix $\mathbf{A}$
         """
 
         return scipy.sparse.csr_matrix(
@@ -60,14 +108,27 @@ class Simulation:
     @cached_property
     def num_neighbors(self) -> int:
 
+        r"""
+        Coordination number of the lattice.
+
+        Returns:
+            int: Coordination number, counting all neighbors
+        """
+
         num_neighbors_per_site = self.adjacency_matrix.sum(axis=0)
         if not np.isclose(num_neighbors_per_site.std(), 0.0):
             raise ValueError("non-periodic lattice")
         return num_neighbors_per_site.mean()
 
-    def get_lammps_dump_str(self, types: np.typing.NDArray[np.floating], step: int, t: float) -> str:
+    def get_lammps_dump_str(
+        self,
+        types: np.typing.NDArray[np.floating],
+        step: int,
+        t: float,
+        fmt: Tuple[str, str, str, str, str] = ("%.0f", "%.0f", "%.4f", "%.4f", "%.4f")
+    ) -> str:
 
-        """
+        r"""
         Shortcut method for getting a LAMMPS-style dump str, which looks like:
 
         ```
@@ -90,6 +151,19 @@ class Simulation:
         ```
 
         at each timestep
+
+        Arguments:
+            types (np.ndarray):
+                State matrix $\mathbf{x}$, where $x_i = 1$ if site $i$ is occupied and $0$ else.
+            step (int):
+                Current step in the simulation.
+            t (float):
+                Current time in the simulation.
+            fmt (Tuple[str, str, str, str, str]):
+                Sequence of format specifiers for LAMMPS-style dumping.
+
+        Returns:
+            str: The LAMMPS-style dump string
         """
 
         mask = types == 1
@@ -113,7 +187,7 @@ class Simulation:
         data = np.concatenate((occupied_ids, np.ones_like(occupied_ids), occupied_sites), axis=1)
 
         with StringIO() as string_io:
-            np.savetxt(string_io, data, fmt=("%.0f", "%.0f", "%.4f", "%.4f", "%.4f"), comments="", header=header) # type: ignore
+            np.savetxt(string_io, data, fmt=fmt, comments="", header=header) # type: ignore
             return string_io.getvalue()
 
     @property
@@ -123,6 +197,9 @@ class Simulation:
         Shorthand when computing dynamic evaporation prefactor, i.e.:
 
         $$\nu_t = \kappa / \left\langle \exp\left(\beta\Delta E_\text{evap}\right)\right\rangle$$
+
+        Returns:
+            float: $\kappa$
         """
 
         # only defined if the surface density has been calculated or not
@@ -137,9 +214,15 @@ class Simulation:
         types: np.typing.NDArray[np.floating]
     ) -> Tuple[np.typing.NDArray[np.integer], np.typing.NDArray[np.integer]]:
 
-        """
+        r"""
         Function for computing interfacial solvent and solid sites.
-        Ax counts the number of currently occupied neighbors.
+        $\mathbf{A}\mathbf{x}$ counts the number of currently occupied neighbors.
+
+        Arguments:
+            types (np.ndarray): State vector $\mathbf{x}$
+
+        Returns:
+            Tuple[np.ndarray, np.ndarray]: IDs of solid sites and IDs of solvent sites at interface
         """
 
         occupied_neighbor_count = self.adjacency_matrix @ types
@@ -160,6 +243,13 @@ class Simulation:
         ```
 
         or any other IO-like object, such as StringIO or BytesIO
+
+        Arguments:
+
+            dump_file (IO):
+                `IO` instance where user will store dump information
+            dump_every (int):
+                How often to dump information
         """
 
         # initialize a spherical crystal with specified radius

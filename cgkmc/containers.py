@@ -1,3 +1,9 @@
+"""
+This module has container classes to propagate data through the KMC simulation. These container classes define the
+solvent, growth, and lattice of the simulation, as well as the interaction energies between neighbors.
+"""
+
+
 from dataclasses import dataclass
 from typing import Tuple, Optional
 import logging
@@ -15,26 +21,55 @@ logger = logging.getLogger(__name__)
 class Solvent:
     r"""
     Solvent container class.
-    Temperature (or $\beta$), diffusivity, and solubility limit fully define the solvent.
-    $\beta$ should match the units of the interaction energies you specify.
-    See `utils.Units` class for available energy units, and use temp_to_beta() to get $\beta$ from temperature in K
+
+    Temperature (or $\beta$), diffusivity, and solubility limit fully define the solvent. $\beta$ should match the
+    units of the interaction energies you specify. See `utils.Units` class for available energy units, and use
+    `utils.temp_to_beta` to get $\beta$ from temperature in Kelvin.
+
+    Attributes:
+        beta (float):
+            Thermodynamic $\beta$ defined as $1/(k_BT)$, where $k_B$ is the
+            [Boltzmann constant](https://en.wikipedia.org/wiki/Boltzmann_constant) and $T$ is temperature
+        diffusivity (float):
+            Diffusivity of solute in liquid phase $D$
+        solubility_limit (float):
+            Solubility limit, or equivalently concentration of solute in liquid phase $n_\infty$
     """
 
     beta: float
+    r"""thermodynamic $\beta$"""
+
     diffusivity: float
+    r"""diffusivity of solute $D$"""
+
     solubility_limit: float
+    r"""solubility limit $n_\infty$"""
 
 
 @dataclass
 class Growth:
-    """
+    r"""
     Growth container class.
     Mimics experimental controls, i.e. initial crystal size, amount of time we grow, and the final size we want.
+
+    Attributes:
+        initial_radius (float):
+            Initial radius of spherical seed in physical units, or the same units as the specified lattice parameters
+        num_steps (int):
+            Number of KMC steps to perform
+        desired_size (int):
+            The desired number of molecules in the final crystal. The final crystal will not have this exact number of
+            molecules, but increasing this parameter will increase the final size.
     """
 
     initial_radius: float
+    r"""initial radius $R_0$"""
+
     num_steps: int
+    r"""number of KMC steps $N_\text{steps}$"""
+
     desired_size: int
+    r"""desired size of final crystal $N_*$"""
 
     @property
     def initial_surface_area(self) -> float:
@@ -48,13 +83,29 @@ class Growth:
 
 @dataclass
 class CubicLattice:
-    """
-    CubicLattice
+
+    r"""
+    Lattice container class, which creates the resulting cubic lattice.
+
+    Attributes:
+        dimensions (np.ndarray):
+            Dimensions of the cubic lattice in terms of unit cells. For a $10\times 15\times 20$ lattice, for example,
+            specify `dimensions=np.array([10, 15, 20])`.
+        lattice_parameters (np.ndarray):
+            Lattice parameters of the lattice $a$, $b$, and $c$.
+        atomic_basis (np.ndarray):
+            Atomic basis of the solid phase's unit cell.
+            Should be an array with size $(\text{number of molecules per unit cell}, 3)$
     """
 
     dimensions: np.typing.NDArray[np.integer]
+    r"""Dimensions of the cubic lattice in terms of unit cells"""
+
     lattice_parameters: np.typing.NDArray[np.floating]
+    r"""Lattice parameters of the lattice $a$, $b$, and $c$."""
+
     atomic_basis: np.typing.NDArray[np.floating]
+    r"""Atomic basis of the solid phase's unit cell."""
 
     def __post_init__(self):
         # turn objects into tensors if they're not already tensors
@@ -68,14 +119,35 @@ class CubicLattice:
     @property
     def density(self) -> float:
 
+        r"""
+        Molecular density of the solid phase, in units of molecules per volume
+
+        Returns:
+            float: density $\rho$
+        """
+
         return self.atomic_basis.shape[0] / np.prod(self.lattice_parameters)
 
     @property
     def molecular_volume(self) -> float:
 
+        r"""
+        Molecular volume of the solid phase, in units of volume per molecule
+
+        Returns:
+            float: molecular volume $\omega = 1/\rho$
+        """
+
         return 1.0 / self.density
 
     def initialize_simulation(self) -> Tuple[np.typing.NDArray[np.floating], np.typing.NDArray[np.floating]]:
+
+        r"""
+        Initialize the simulation by creating the lattice positions and bounds.
+
+        Returns:
+            Tuple[np.ndarray, np.ndarray]: The lattice points and supercell bounds
+        """
 
         x = np.arange(self.dimensions[0]) * self.lattice_parameters[0]
         y = np.arange(self.dimensions[1]) * self.lattice_parameters[1]
@@ -96,15 +168,48 @@ class CubicLattice:
 @dataclass
 class KthNearest:
 
+    r"""
+    Container class for $k$'th nearest interactions.
+
+    This class computes the interaction matrix $\mathbf{Q}$, acting as an energy driver for the growth simulation.
+
+    Attributes:
+
+        cutoffs (np.ndarray):
+
+            Interaction distance cutoffs $(\delta_1, \delta_2, \cdots, \delta_k)$. For example, two molecules with
+            interaction distance between $0$ and $\delta_1$ will interact with energy $\varepsilon_1$, two molecules
+            with interaction distance between $\delta_1$ and $\delta_2$ will interact with energy $\varepsilon_2$, etc.
+
+        interaction_energies (np.ndarray):
+
+            Interaction energies $(\varepsilon_1, \varepsilon_2, \cdots, \varepsilon_k)$.
+
+        maxint (int):
+
+            Optional max tree size for [KDTree](https://en.wikipedia.org/wiki/K-d_tree) distance computation. If the
+            number of molecules is larger than this value, `scipy.spatial.KDTree` will switch to brute-forcing the
+            distance computations.
+
+        use_cache (bool):
+
+            Whether to use a caching mechanism or not. If true, the simulation will try and load $\mathbf{Q}$ from
+            `.kmc_cache/`. If $\mathbf{Q}$ does not exist in the local cache already, it will be stored.
+    """
+
     cutoffs: np.typing.NDArray[np.floating]
+    r"""distance cutoffs $(\delta_1, \delta_2, \cdots, \delta_k)$"""
+
     interaction_energies: np.typing.NDArray[np.floating]
-    maxint: Optional[int] = None
+    r"""Interaction energies $(\varepsilon_1, \varepsilon_2, \cdots, \varepsilon_k)$"""
+
+    maxint: Optional[int] = 10_000_000
+    """maximum leaf size for `scipy.spatial.KDTree`"""
+
     use_cache: Optional[bool] = False
+    r"""Whether to use the local cache or not to fetch $\mathbf{Q}$"""
 
     def __post_init__(self):
-
-        if not self.maxint:
-            self.maxint = 10_000_000
 
         if not isinstance(self.cutoffs, np.ndarray):
             self.cutoffs = np.array(self.cutoffs)
@@ -117,6 +222,17 @@ class KthNearest:
         lattice_points: np.typing.NDArray[np.floating],
         bounds: np.typing.NDArray[np.floating]
     ) -> scipy.sparse.csr_matrix:
+
+        r"""
+        Compute the interaction matrix $\mathbf{Q}$ from the lattice points and bounds.
+
+        Args:
+            lattice_points (np.ndarray): Lattice points in the solid phase
+            bounds (np.ndarray): Supercell bounds
+
+        Returns:
+            scipy.sparse.csr_matrix: $\mathbf{Q}$ in sparse format
+        """
 
         tree = scipy.spatial.KDTree(lattice_points, leafsize=self.maxint, boxsize=bounds)
 
@@ -136,6 +252,18 @@ class KthNearest:
         lattice_points: np.typing.NDArray[np.floating],
         bounds: np.typing.NDArray[np.floating]
     ) -> scipy.sparse.csr_matrix:
+
+        r"""
+        Get the interaction matrix $\mathbf{Q}$ from the lattice points and bounds. This either calls
+        `KthNearest.compute_hamiltonian`, or loads $\mathbf{Q}$ from the user's local cache.
+
+        Args:
+            lattice_points (np.ndarray): Lattice points in the solid phase
+            bounds (np.ndarray): Supercell bounds
+
+        Returns:
+            scipy.sparse.csr_matrix: $\mathbf{Q}$ in sparse format
+        """
 
         if not self.use_cache:
             hamiltonian = self.compute_hamiltonian(lattice_points, bounds)

@@ -1,3 +1,8 @@
+"""
+This module provides some extraneous utilities
+"""
+
+
 from enum import Enum, auto
 from hashlib import sha1
 
@@ -18,6 +23,13 @@ class Units(Enum):
     nano = auto()
 
     def boltzmann_constant(self):
+
+        r"""
+        $k_B$ in whatever chosen unit system.
+
+        Returns:
+            float: [Boltzmann constant](https://en.wikipedia.org/wiki/Boltzmann_constant)
+        """
 
         if self == Units.real:
             return 1.987e-3
@@ -46,11 +58,31 @@ class Units(Enum):
 def temp_to_beta(temperature: float, units: Units):
     r"""
     helper class to convert temperature to thermodynamic $\beta$ for a given choice of units
+
+    Arguments:
+        temperature (float):
+            Absolute temperature $T$
+        units (Units):
+            Chosen unit system
+
+    Returns:
+        float: Thermodynamic $\beta = 1/(k_BT)$
     """
 
     return 1.0 / (units.boltzmann_constant() * temperature)
 
 
 def array_to_hex(x: np.typing.NDArray[np.floating]) -> str:
+
+    """
+    Method for computing an array into a unique hex string using the
+    [SHA-1 function](https://en.wikipedia.org/wiki/SHA-1)
+
+    Arguments:
+        x (np.ndarray): Desired array to hex-ify
+
+    Returns:
+        str: Hex-ified string
+    """
 
     return sha1(x.tobytes()).hexdigest()
