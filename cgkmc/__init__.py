@@ -64,7 +64,7 @@ This dump file (and its compressed version) can be loaded into OVITO for visuali
 Your window should look like this:
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/jwjeffr/cgkmc/refs/heads/main/examples/ovito_steps/step1.jpg" alt="Loading in dump file">
+<img src="https://raw.githubusercontent.com/jwjeffr/cgkmc/refs/heads/main/examples/ovito_steps/step1.jpg" alt="Loading in dump file" style="width: 50%;">
 </p>
 
 The particles here are not particularly useful for visualization. Instead, we can create a surface mesh. Click:
@@ -75,21 +75,21 @@ The particles here are not particularly useful for visualization. Instead, we ca
 Your window should now look like this:
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/jwjeffr/cgkmc/refs/heads/main/examples/ovito_steps/step2.jpg" alt="Constructing surface mesh">
+<img src="https://raw.githubusercontent.com/jwjeffr/cgkmc/refs/heads/main/examples/ovito_steps/step2.jpg" alt="Constructing surface mesh" style="width: 50%;">
 </p>
 
 The particles here are still a bit of an eyesore. You can get rid of them by clicking `Particles` under the
 `Visual elements` tab, also under the dump file name. After doing this, your window should look like this:
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/jwjeffr/cgkmc/refs/heads/main/examples/ovito_steps/step3.jpg" alt="Hiding particles">
+<img src="https://raw.githubusercontent.com/jwjeffr/cgkmc/refs/heads/main/examples/ovito_steps/step3.jpg" alt="Hiding particles" style="width: 50%;">
 </p>
 
 and now this looks much better! You can now press the play button (bottom center) to view the animation. Your window at
 the final frame should look like this:
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/jwjeffr/cgkmc/refs/heads/main/examples/ovito_steps/step4.jpg" alt="Final frame">
+<img src="https://raw.githubusercontent.com/jwjeffr/cgkmc/refs/heads/main/examples/ovito_steps/step4.jpg" alt="Final frame" style="width: 50%;">
 </p>
 
 This final frame makes sense! The $\\{100\\}$ surfaces have the lowest surface energy in simple cubic crystals with
@@ -203,7 +203,7 @@ Some clear crystal morphology jumps out, namely $\\{110\\}$ surfaces. See a more
 [here](https://www.youtube.com/watch?v=dQw4w9WgXcQ)!
 """
 
-__version__ = "0.0.9"
+__version__ = "0.0.10"
 __authors__ = ["Jacob Jeffries"]
 __author_emails__ = ["jwjeffr@clemson.edu"]
 __url__ = "https://github.com/jwjeffr/cgkmc"
