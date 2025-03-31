@@ -49,16 +49,57 @@ and so on. This can then be redirected to a file, and visualized by many traject
 
 ## ⚛ Visualizing with OVITO
 
-WIP: Include OVITO visualization screenshots
+Below is a simple example of growing a simple cubic crystal starting from a spherical seed, dumping to a file
+`cube.dump`, and compressing the dump file to `cube.dump.gz`.
 
 ```py
 .. include:: ../examples/ovito_visualization.py
 ```
 
+This dump file (and its compressed version) can be loaded into OVITO for visualization! Simply:
+
+- Open OVITO
+- Load the dump file (`File` ➡ `Load File` ➡ `cube.dump.gz` ➡ `Open`)
+
+Your window should look like this:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/jwjeffr/cgkmc/refs/heads/main/examples/ovito_steps/step1.jpg" alt="Loading in dump file">
+</p>
+
+The particles here are not particularly useful for visualization. Instead, we can create a surface mesh. Click:
+
+- `Add modification` (top right, under the dump file name)
+- `Construct surface mesh` (Scroll down to `Visualization` category)
+
+Your window should now look like this:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/jwjeffr/cgkmc/refs/heads/main/examples/ovito_steps/step2.jpg" alt="Constructing surface mesh">
+</p>
+
+The particles here are still a bit of an eyesore. You can get rid of them by clicking `Particles` under the
+`Visual elements` tab, also under the dump file name. After doing this, your window should look like this:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/jwjeffr/cgkmc/refs/heads/main/examples/ovito_steps/step3.jpg" alt="Hiding particles">
+</p>
+
+and now this looks much better! You can now press the play button (bottom center) to view the animation. Your window at
+the final frame should look like this:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/jwjeffr/cgkmc/refs/heads/main/examples/ovito_steps/step4.jpg" alt="Final frame">
+</p>
+
+This final frame makes sense! The $\\{100\\}$ surfaces have the lowest surface energy in simple cubic crystals with
+first nearest neighbor interactions, so the crystal should grow into something roughly rectangular.
+
 ## 📝 Using a logger
 
 Below is an example of using a logger to grab information from the simulation. `cgkmc` uses Python's native `logging`
-library, so one can use a `logging` config to grab simulation information.
+library (with docs [here](https://docs.python.org/3/library/logging.html)), so one can use a `logging` config to grab
+simulation information.
 
 ```py
 .. include:: ../examples/writing_log.py
@@ -162,7 +203,7 @@ Some clear crystal morphology jumps out, namely $\\{110\\}$ surfaces. See a more
 [here](https://www.youtube.com/watch?v=dQw4w9WgXcQ)!
 """
 
-__version__ = "0.0.8"
+__version__ = "0.0.9"
 __authors__ = ["Jacob Jeffries"]
 __author_emails__ = ["jwjeffr@clemson.edu"]
 __url__ = "https://github.com/jwjeffr/cgkmc"
