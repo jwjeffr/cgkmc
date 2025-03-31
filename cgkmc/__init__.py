@@ -162,7 +162,7 @@ Some clear crystal morphology jumps out, namely $\\{110\\}$ surfaces. See a more
 [here](https://www.youtube.com/watch?v=dQw4w9WgXcQ)!
 """
 
-__version__ = "0.0.7"
+__version__ = "0.0.8"
 __authors__ = ["Jacob Jeffries"]
 __author_emails__ = ["jwjeffr@clemson.edu"]
 __url__ = "https://github.com/jwjeffr/cgkmc"

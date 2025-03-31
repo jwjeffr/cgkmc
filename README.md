@@ -17,6 +17,19 @@ Crystal Growth Kinetic Monte Carlo.
 pip install cgkmc
 ```
 
-📃 License
+## 📃 License
 
 `cgkmc` is released under the MIT License.
+
+## 🔖 Citing
+
+If you found this package useful, please cite it in your work!
+
+```
+@misc{cgkmc,
+    author={Jacob Jeffries},
+    title={Crystal Growth Kinetic Monte Carlo},
+    howpublished={\url{https://pypi.org/project/cgkmc/}},
+    year={2025}
+}
+```

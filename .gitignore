@@ -176,3 +176,6 @@ cython_debug/
 _build/
 scratch.py
 .kmc_cache/
+
+*.dump
+*.dump.gz
