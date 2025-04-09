@@ -8,6 +8,7 @@ from typing import Optional, Tuple, IO
 from functools import cached_property
 from io import StringIO
 import logging
+import warnings
 
 import numpy as np
 import scipy # type: ignore
@@ -117,7 +118,10 @@ class Simulation:
 
         num_neighbors_per_site = self.adjacency_matrix.sum(axis=0)
         if not np.isclose(num_neighbors_per_site.std(), 0.0):
-            raise ValueError("non-periodic lattice")
+            warnings.warn(
+                "Non-periodic lattice. There is likely problems with periodic boundary conditions. This is probably "
+                "fine if your crystal does not grow to the boundary"
+            )
         return num_neighbors_per_site.mean()
 
     def get_lammps_dump_str(

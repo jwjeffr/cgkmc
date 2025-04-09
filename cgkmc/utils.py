@@ -5,6 +5,7 @@ This module provides some extraneous utilities
 
 from enum import Enum, auto
 from hashlib import sha1
+import warnings
 
 import numpy as np
 
@@ -68,6 +69,13 @@ def temp_to_beta(temperature: float, units: Units):
     Returns:
         float: Thermodynamic $\beta = 1/(k_BT)$
     """
+
+    if temperature == 0:
+        warnings.warn("You have a zero temperature!")
+        return np.inf
+
+    if temperature < 0:
+        warnings.warn("You have a negative temperature!")
 
     return 1.0 / (units.boltzmann_constant() * temperature)
 

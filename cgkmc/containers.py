@@ -71,6 +71,17 @@ class Growth:
     desired_size: int
     r"""desired size of final crystal $N_*$"""
 
+    def __post_init__(self):
+
+        if self.initial_radius <= 0:
+            raise ValueError(f"{self.__class__.__name__}.initial_radius should be positive")
+
+        if self.num_steps <= 0 or not isinstance(self.num_steps, int):
+            raise ValueError(f"{self.__class__.__name__}.num_steps should be a positive integer")
+
+        if self.desired_size <= 0 or not isinstance(self.desired_size, int):
+            raise ValueError(f"{self.__class__.__name__}.desired_size should be a positive integer")
+
     @property
     def initial_surface_area(self) -> float:
         r"""
@@ -108,13 +119,45 @@ class CubicLattice:
     r"""Atomic basis of the solid phase's unit cell."""
 
     def __post_init__(self):
-        # turn objects into tensors if they're not already tensors
+        # turn objects into arrays if they're not already arrays
         if not isinstance(self.dimensions, np.ndarray):
             self.dimensions = np.array(self.dimensions, dtype=int)
         if not isinstance(self.lattice_parameters, np.ndarray):
             self.lattice_parameters = np.array(self.lattice_parameters, dtype=float)
         if not isinstance(self.atomic_basis, np.ndarray):
             self.atomic_basis = np.array(self.atomic_basis, dtype=float)
+
+        if len(self.dimensions.shape) != 1:
+            raise ValueError(
+                f"Invalid lattice geometry. {self.__class__.__name__}.dimensions should have shape "
+                f"(number of spatial dimensions,)"
+            )
+
+        if len(self.lattice_parameters.shape) != 1:
+            raise ValueError(
+                f"Invalid lattice geometry. {self.__class__.__name__}.lattice_parameters should have shape "
+                f"(number of spatial dimensions,)"
+            )
+
+        if len(self.atomic_basis.shape) != 2:
+            raise ValueError(
+                f"Invalid lattice geometry. {self.__class__.__name__}.atomic_basis should have shape "
+                f"(number of particles in unit cell, number of spatial dimensions)."
+            )
+
+        if len(self.dimensions) != len(self.lattice_parameters) != self.atomic_basis.shape[1]:
+
+            raise ValueError(
+                f"Invalid lattice geometry. The number of spatial dimensions in {self.__class__.__name__}.dimensions, "
+                f"{self.__class__.__name__}.lattice_parameters, and {self.__class__.__name__}.atomic_basis should "
+                f"match."
+            )
+
+        if np.prod(self.lattice_parameters) <= 0:
+            raise ValueError(
+                "Invalid lattice geometry. The unit cell's volume, i.e. the product of lattice parameters, should be "
+                "positive."
+            )
 
     @property
     def density(self) -> float:
@@ -216,6 +259,24 @@ class KthNearest:
 
         if not isinstance(self.interaction_energies, np.ndarray):
             self.interaction_energies = np.array(self.interaction_energies)
+
+        if len(self.cutoffs.shape) != 1:
+            raise ValueError(
+                f"Invalid interaction cutoffs. {self.__class__.__name__}.cutoffs should have shape "
+                f"(number of neighbors,)"
+            )
+
+        if len(self.interaction_energies.shape) != 1:
+            raise ValueError(
+                f"Invalid interaction energies. {self.__class__.__name__}.interaction_energies should have shape "
+                f"(number of neighbors,)"
+            )
+
+        if self.cutoffs.shape != self.interaction_energies.shape:
+            raise ValueError(
+                f"Incompatible interaction parameters. {self.__class__.__name__}.cutoffs and "
+                f"{self.__class__.__name__}.interaction_energies should have the same shape."
+            )
 
     def compute_hamiltonian(
         self,
