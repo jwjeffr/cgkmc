@@ -33,3 +33,7 @@ If you found this package useful, please cite it in your work!
     year={2025}
 }
 ```
+
+## ❤️ Acknowledgements
+
+This work was supported by the Laboratory Directed Research and Development program of Los Alamos National Laboratory under project no. 20220431ER.
