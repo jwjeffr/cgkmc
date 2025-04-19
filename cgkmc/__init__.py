@@ -201,9 +201,27 @@ This generates a dump file that we can analyze in OVITO! The animation is below:
 
 Some clear crystal morphology jumps out, namely $\\{110\\}$ surfaces. See a more full study
 [here](https://www.youtube.com/watch?v=dQw4w9WgXcQ)!
+
+## ⌨ Using the command line interface
+
+We also provide an option to use a command-line interface (CLI)! For example, for the simple cubic example from earlier, the
+input file looks like:
+
+```json
+.. include:: ../examples/simple_cubic.json
+```
+
+and the resulting CLI call looks like:
+
+```bash
+cgkmc input_file.json dump_file.dump 1000
+```
+
+which runs a simulation, and dumps molecular coordinates every 1000 steps. This CLI automatically comes with `cgkmc`;
+no additional building is necessary!
 """
 
-__version__ = "0.0.12"
+__version__ = "0.0.13"
 __authors__ = ["Jacob Jeffries"]
 __author_emails__ = ["jwjeffr@clemson.edu"]
 __url__ = "https://github.com/jwjeffr/cgkmc"
@@ -211,3 +229,33 @@ __url__ = "https://github.com/jwjeffr/cgkmc"
 from . import containers as containers
 from . import simulations as simulations
 from . import utils as utils
+
+import argparse
+from pathlib import Path
+import json
+
+
+def cli():
+
+    """
+    @private
+    """
+
+    parser = argparse.ArgumentParser("Command line interface for cgkmc")
+    parser.add_argument("input_file", type=Path, help="path to input json file")
+    parser.add_argument("dump_file", type=Path, help="file to dump coordinates to"),
+    parser.add_argument("dump_every", type=int, help="how often to dump coordinates")
+    args = parser.parse_args()
+
+    with args.input_file.open("r") as file:
+        input_dict = json.load(file)
+
+    simulation = simulations.Simulation(
+        lattice=containers.CubicLattice(**input_dict["lattice"]),
+        interactions=containers.KthNearest(**input_dict["interactions"]),
+        solvent=containers.Solvent(**input_dict["solvent"]),
+        growth=containers.Growth(**input_dict["growth"])
+    )
+
+    with args.dump_file.open("w") as file:
+        simulation.perform(dump_file=file, dump_every=args.dump_every)

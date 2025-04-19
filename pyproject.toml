@@ -49,3 +49,6 @@ path = "cgkmc/__init__.py"
 include = [
     "/cgkmc",
 ]
+
+[project.scripts]
+cgkmc = "cgkmc:cli"

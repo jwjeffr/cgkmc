@@ -1,0 +1,24 @@
+{
+  "lattice": {
+    "dimensions": [5, 5, 5],
+    "lattice_parameters": [1.0, 1.0, 1.0],
+    "atomic_basis": [
+      [0.0, 0.0, 0.0]
+    ]
+  },
+  "interactions": {
+    "cutoffs": [1.1],
+    "interaction_energies": [-1.0],
+    "use_cache": true
+  },
+  "solvent": {
+    "beta": 38.68,
+    "diffusivity": 1.0e+11,
+    "solubility_limit": 1.0e-4
+  },
+  "growth": {
+    "initial_radius": 2.0,
+    "num_steps": 1000,
+    "desired_size": 4000
+  }
+}
