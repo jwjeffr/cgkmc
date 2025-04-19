@@ -204,8 +204,8 @@ Some clear crystal morphology jumps out, namely $\\{110\\}$ surfaces. See a more
 
 ## ⌨ Using the command line interface
 
-We also provide an option to use a command-line interface (CLI)! For example, for the simple cubic example from earlier, the
-input file looks like:
+We also provide an option to use a command-line interface (CLI)! For example, for the simple cubic example from earlier,
+the input file looks like:
 
 ```json
 .. include:: ../examples/simple_cubic.json
@@ -214,14 +214,22 @@ input file looks like:
 and the resulting CLI call looks like:
 
 ```bash
-cgkmc input_file.json dump_file.dump 1000
+cgkmc --input_file input_file.json --dump_file dump_file.dump --dump_every 1000
 ```
 
-which runs a simulation, and dumps molecular coordinates every 1000 steps. This CLI automatically comes with `cgkmc`;
-no additional building is necessary!
+which runs a simulation, and dumps molecular coordinates every 1000 steps. You can also specify an optional log file
+with `--log_file`, which gives you access to dynamical variables like occupancy and energy.
+
+This CLI automatically comes with `cgkmc`;no additional building is necessary! You can also run:
+
+```bash
+cgkmc --help
+```
+
+for more info!
 """
 
-__version__ = "0.0.13"
+__version__ = "0.0.14"
 __authors__ = ["Jacob Jeffries"]
 __author_emails__ = ["jwjeffr@clemson.edu"]
 __url__ = "https://github.com/jwjeffr/cgkmc"
@@ -233,6 +241,7 @@ from . import utils as utils
 import argparse
 from pathlib import Path
 import json
+import logging
 
 
 def cli():
@@ -241,11 +250,25 @@ def cli():
     @private
     """
 
-    parser = argparse.ArgumentParser("Command line interface for cgkmc")
-    parser.add_argument("input_file", type=Path, help="path to input json file")
-    parser.add_argument("dump_file", type=Path, help="file to dump coordinates to"),
-    parser.add_argument("dump_every", type=int, help="how often to dump coordinates")
+    parser = argparse.ArgumentParser(
+        prog="cgkmc",
+        description="Command line interface for Crystal Growth Kinetic Monte Carlo (cgkmc)",
+        epilog="See https://jwjeffr.github.io/cgkmc/ for full documentation!"
+    )
+    parser.add_argument("-i", "--input_file", type=Path, help="path to input json file")
+    parser.add_argument("-d", "--dump_file", type=Path, help="file to dump coordinates to"),
+    parser.add_argument("-n", "--dump_every", type=int, help="how often to dump coordinates")
+    parser.add_argument("-l", "--log_file", type=Path, help="optional log file", required=False, default=None)
     args = parser.parse_args()
+
+    if args.log_file:
+        with args.log_file.open("w"):
+            pass
+        logging.basicConfig(
+            filename=args.log_file,
+            level=logging.INFO,
+            format='%(asctime)s %(levelname)s:%(message)s TIME=%(t)s ENERGY=%(total_energy)s OCCUPANCY=%(occupancy)s'
+        )
 
     with args.input_file.open("r") as file:
         input_dict = json.load(file)
