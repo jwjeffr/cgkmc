@@ -143,8 +143,6 @@ WIP
 ### Script
 
 ```py
-from io import StringIO
-from logging.config import dictConfig
 from pathlib import Path
 
 from cgkmc import simulations, containers, utils
@@ -155,15 +153,15 @@ def main():
     simulation = simulations.Simulation(
         lattice=containers.CubicLattice(
             dimensions=(62, 62, 140),
-            lattice_parameters=(9.088, 9.088, 6.737),
+            lattice_parameters=(9.087, 9.087, 6.738),
             atomic_basis=[
                 [0.0, 0.0, 0.0],
                 [0.5, 0.5, 0.5]
             ]
         ),
         interactions=simulations.KthNearest(
-            cutoffs=(7.0, 7.5),
-            interaction_energies=(-0.294, -0.184),
+            cutoffs=(7.0, 7.5, 9.5),
+            interaction_energies=(-0.294, -0.184, -0.002),
             use_cache=True
         ),
         solvent=containers.Solvent(
@@ -173,7 +171,7 @@ def main():
         ),
         growth=containers.Growth(
             initial_radius=75.0,
-            num_steps=2_000_000,
+            num_steps=1_000_000,
             desired_size=40_000
         )
     )
@@ -191,7 +189,7 @@ This generates a dump file that we can analyze in OVITO! The animation is below:
 
 <div style="padding:75% 0 0 0;position:relative;">
 <iframe
-    src="https://player.vimeo.com/video/1070858335?h=abecf46fa5&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" style="position:absolute;top:0;left:0;width:100%;height:100%;"
+    src="https://player.vimeo.com/video/1078144061?h=446c9e7099&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" style="position:absolute;top:0;left:0;width:100%;height:100%;"
     title="petn"
 >
 </iframe>
@@ -229,7 +227,7 @@ cgkmc --help
 for more info!
 """
 
-__version__ = "0.0.14"
+__version__ = "0.0.15"
 __authors__ = ["Jacob Jeffries"]
 __author_emails__ = ["jwjeffr@clemson.edu"]
 __url__ = "https://github.com/jwjeffr/cgkmc"
