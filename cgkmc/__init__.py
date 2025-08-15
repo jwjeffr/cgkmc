@@ -160,7 +160,7 @@ cgkmc --help
 for more info!
 """
 
-__version__ = "0.0.15"
+__version__ = "0.0.16"
 __authors__ = ["Jacob Jeffries"]
 __author_emails__ = ["jwjeffr@clemson.edu"]
 __url__ = "https://github.com/jwjeffr/cgkmc"
