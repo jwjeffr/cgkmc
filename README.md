@@ -36,4 +36,10 @@ If you found this package useful, please cite our work on arXiv:
 
 ## ❤️ Acknowledgements
 
-This work was supported by the Laboratory Directed Research and Development program of Los Alamos National Laboratory under project no. 20220431ER.
+This work was supported by the Laboratory Directed Research and Development program of Los Alamos National Laboratory 
+under project no. 20220431ER. This research used resources provided by the Los Alamos National Laboratory Institutional 
+Computing Program. Los Alamos National Laboratory is operated by Triad National Security, LLC, for the National Nuclear 
+Security Administration of U.S. Department of Energy (contract no. 89233218CNA000001).
+
+Additionally, this material is based on work supported by the National Science Foundation under Grant Nos. 
+MRI# 2024205, MRI# 1725573, and CRI# 2010270 for allotment of compute time on the Clemson University Palmetto Cluster.
