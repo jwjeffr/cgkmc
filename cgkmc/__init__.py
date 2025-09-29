@@ -129,9 +129,82 @@ which generates the plot below:
 You can get very creative with this! My preferred is logging in [JSON Lines format](https://jsonlines.org/).
 mCoding has a very great YouTube video on this, which is [here](https://www.youtube.com/watch?v=9L77QExPmI0).
 
-## 🧪 Case study
+## 🧪 Case study: PETN
 
-WIP
+### What is PETN?
+
+[Pentaerythritol tetranitrate](https://en.wikipedia.org/wiki/Pentaerythritol_tetranitrate) (PETN) is a very well-studied
+organic crystalline system. Here, we will run `cgkmc` on a PETN system to predict the morphology of a PETN nanocrystal.
+
+### PETN Parameters
+
+Following work by Singh. et al. [here](https://doi.org/10.1021/acs.cgd.3c01487), we can reduce PETN molecules to
+individual effective atoms inside a body-tetragonal unit cell, with lattice parameters $a = b = 9.087\;\text{Å}$,
+$c = 6.738\;\text{Å}$, and "atomic" basis $\\{(0, 0, 0), (1/2, 1/2, 1/2)\\}$. Atomic is in quotes here because
+the particles are molecules, not atoms. Additionally, we can use the interaction energies `(-0.294, -0.184, -0.002)` and
+corresponding cutoff distances `(7.0, 7.5, 9.5)`, respectively in $\text{eV}$ and $\text{Å}$.
+
+### Script
+
+A script for the simulation of such a system is below:
+
+```py
+from pathlib import Path
+
+from cgkmc import simulations, containers, utils
+
+
+def main():
+
+    simulation = simulations.Simulation(
+        lattice=containers.CubicLattice(
+            dimensions=(62, 62, 140),
+            lattice_parameters=(9.087, 9.087, 6.738),
+            atomic_basis=[
+                [0.0, 0.0, 0.0],
+                [0.5, 0.5, 0.5]
+            ]
+        ),
+        interactions=simulations.KthNearest(
+            cutoffs=(7.0, 7.5, 9.5),
+            interaction_energies=(-0.294, -0.184, -0.002),
+            use_cache=True
+        ),
+        solvent=containers.Solvent(
+            beta=utils.temp_to_beta(temperature=300, units=utils.Units.metal),
+            diffusivity=1.0e+11,
+            solubility_limit=1.0e-4
+        ),
+        growth=containers.Growth(
+            initial_radius=75.0,
+            num_steps=1_000_000,
+            desired_size=40_000
+        )
+    )
+
+    with Path("petn.dump").open("w") as file:
+        simulation.perform(file, dump_every=1_000)
+
+
+if __name__ == "__main__":
+
+    main()
+```
+
+This generates a dump file that we can analyze in OVITO! The animation is below:
+
+<div style="padding:75% 0 0 0;position:relative;">
+<iframe
+    src="https://player.vimeo.com/video/1078144061?h=446c9e7099&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" style="position:absolute;top:0;left:0;width:100%;height:100%;"
+    title="petn"
+>
+</iframe>
+</div>
+<script src="https://player.vimeo.com/api/player.js">
+</script>
+
+Some clear crystal morphology jumps out, namely $\\{110\\}$ surfaces. See a more full study
+[here](https://google.com/)!
 
 ## ⌨ Using the command line interface
 
@@ -151,7 +224,7 @@ cgkmc --input_file input_file.json --dump_file dump_file.dump --dump_every 1000
 which runs a simulation, and dumps molecular coordinates every 1000 steps. You can also specify an optional log file
 with `--log_file`, which gives you access to dynamical variables like occupancy and energy.
 
-This CLI automatically comes with `cgkmc`;no additional building is necessary! You can also run:
+This CLI automatically comes with `cgkmc`. No additional building is necessary! You can also run:
 
 ```bash
 cgkmc --help
@@ -160,7 +233,7 @@ cgkmc --help
 for more info!
 """
 
-__version__ = "0.0.16"
+__version__ = "0.1.0"
 __authors__ = ["Jacob Jeffries"]
 __author_emails__ = ["jwjeffr@clemson.edu"]
 __url__ = "https://github.com/jwjeffr/cgkmc"

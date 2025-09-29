@@ -23,7 +23,7 @@ pip install cgkmc
 
 ## 🔖 Citing
 
-If you found this package useful, please cite it in your work!
+If you found this package useful, please cite our work on arXiv:
 
 ```
 @misc{cgkmc,
