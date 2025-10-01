@@ -23,17 +23,26 @@ pip install cgkmc
 
 ## 🔖 Citing
 
-If you found this package useful, please cite it in your work!
+If you found this package useful, please cite our work on arXiv:
 
 ```
 @misc{cgkmc,
-    author={Jacob Jeffries},
-    title={Crystal Growth Kinetic Monte Carlo},
-    howpublished={\url{https://pypi.org/project/cgkmc/}},
-    year={2025}
+      title={Kinetic Monte Carlo prediction of the morphology of pentaerythritol tetranitrate}, 
+      author={Jacob Jeffries and Himanshu Singh and Romain Perriot and Christian Negre and Antonio Redondo and Enrique Martinez},
+      year={2025},
+      eprint={2509.25490},
+      archivePrefix={arXiv},
+      primaryClass={cond-mat.mtrl-sci},
+      url={https://arxiv.org/abs/2509.25490}, 
 }
 ```
 
 ## ❤️ Acknowledgements
 
-This work was supported by the Laboratory Directed Research and Development program of Los Alamos National Laboratory under project no. 20220431ER.
+This work was supported by the Laboratory Directed Research and Development program of Los Alamos National Laboratory 
+under project no. 20220431ER. This research used resources provided by the Los Alamos National Laboratory Institutional 
+Computing Program. Los Alamos National Laboratory is operated by Triad National Security, LLC, for the National Nuclear 
+Security Administration of U.S. Department of Energy (contract no. 89233218CNA000001).
+
+Additionally, this material is based on work supported by the National Science Foundation under Grant Nos. 
+MRI# 2024205, MRI# 1725573, and CRI# 2010270 for allotment of compute time on the Clemson University Palmetto Cluster.
