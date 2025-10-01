@@ -204,7 +204,7 @@ This generates a dump file that we can analyze in OVITO! The animation is below:
 </script>
 
 Some clear crystal morphology jumps out, namely $\\{110\\}$ surfaces. See a more full study
-[here](https://google.com/)!
+[here](https://arxiv.org/abs/2509.25490)!
 
 ## ⌨ Using the command line interface
 
